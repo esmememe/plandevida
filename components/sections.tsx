@@ -191,8 +191,8 @@ export async function ConnectionsSection({ ctx }: { ctx: Ctx }) {
   const google = rows.find((r) => r.proveedor === "google");
   const services = [
     { nombre: "Anthropic (IA)", ok: Boolean(process.env.ANTHROPIC_API_KEY) },
-    { nombre: "Resend (correo del resumen)", ok: Boolean(process.env.RESEND_API_KEY) },
   ];
+  const resendOn = Boolean(process.env.RESEND_API_KEY);
   return (
     <Section id="conexiones" title="Estado de conexiones">
       <ul className="divide-y rounded-lg border text-sm">
@@ -211,6 +211,15 @@ export async function ConnectionsSection({ ctx }: { ctx: Ctx }) {
           >
             {google ? "Reconectar" : "Conectar"}
           </a>
+        </li>
+        <li className="flex items-center justify-between gap-2 p-3">
+          <div>
+            <p className="font-medium">Resumen matutino por correo</p>
+            {!resendOn && (
+              <p className="text-xs text-muted-foreground">Opcional. Agrega RESEND_API_KEY en Vercel para activarlo.</p>
+            )}
+          </div>
+          <Badge variant={resendOn ? "muted" : "outline"}>{resendOn ? "Activado" : "Desactivado"}</Badge>
         </li>
         {services.map((s) => (
           <li key={s.nombre} className="flex items-center justify-between gap-2 p-3">

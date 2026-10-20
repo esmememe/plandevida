@@ -8,7 +8,7 @@ Una sola página que junta tu calendario, tu correo y tus tareas, y te manda un 
 - **Tareas**: crear, editar, completar y borrar. Se pueden escribir en una línea: "pagar luz el viernes".
 - **Alertas cruzadas**: correos con fechas que no están en tu calendario, reuniones sin enlace ni descripción, tareas sin tiempo libre y días con más de 6 h de reuniones.
 - **Estado de conexiones** con botón para reconectar Google.
-- **Resumen matutino** por correo (Resend) y botón "Enviar resumen ahora".
+- **Resumen matutino** por correo (Resend) y botón "Enviar resumen ahora". **Opcional:** se activa solo si existe `RESEND_API_KEY`.
 
 **Solo lectura:** la app nunca envía, borra ni modifica correos o eventos. Los permisos que pide a Google son `calendar.readonly` y `gmail.readonly`.
 
@@ -60,7 +60,7 @@ El costo de este modo: **Google hace que el permiso caduque cada 7 días.** Cuan
 ### 4. Anthropic y Resend
 
 1. **Anthropic**: en [console.anthropic.com](https://console.anthropic.com) → **API Keys** → crea una llave. Necesitas saldo en la cuenta.
-2. **Resend**: crea tu cuenta en [resend.com](https://resend.com) **con el mismo correo que usarás en el panel** → **API Keys** → crea una llave. Sin dominio propio, Resend solo deja enviar correos a tu propio correo desde `onboarding@resend.dev`, que es justo lo que necesitamos.
+2. **Resend (opcional)**: solo si quieres el resumen matutino por correo. Crea tu cuenta en [resend.com](https://resend.com) **con el mismo correo que usarás en el panel** → **API Keys** → crea una llave. Sin dominio propio, Resend solo deja enviar correos a tu propio correo desde `onboarding@resend.dev`, que es justo lo que necesitamos. Si lo omites, el panel funciona igual, solo sin resumen por correo.
 
 ### 5. Variables de entorno en Vercel
 
@@ -79,8 +79,8 @@ En Vercel → tu proyecto → **Settings → Environment Variables**, agrega est
 | `GOOGLE_CLIENT_SECRET` | Secreto del cliente de Google |
 | `ANTHROPIC_API_KEY` | Llave de Anthropic |
 | `ANTHROPIC_MODEL` | `claude-sonnet-5-5` |
-| `RESEND_API_KEY` | Llave de Resend |
-| `RESEND_FROM` | `Panel de Vida <onboarding@resend.dev>` |
+| `RESEND_API_KEY` | *(Opcional)* Llave de Resend. Sin ella, el resumen por correo queda apagado |
+| `RESEND_FROM` | *(Opcional)* `Panel de Vida <onboarding@resend.dev>` |
 | `CRON_SECRET` | Una clave larga al azar (ver abajo) |
 | `TOKEN_ENCRYPTION_KEY` | Otra clave larga al azar, distinta |
 
@@ -93,11 +93,13 @@ Después: **Deployments → ⋯ → Redeploy**.
 1. Abre `TU_URL` → **Entrar con Google** con tu correo.
 2. En la agenda presiona **Conectar Google** y acepta los permisos de solo lectura.
 3. Agrega una tarea de prueba, por ejemplo "pagar luz el viernes".
-4. Presiona **Enviar resumen ahora** y revisa tu correo.
+4. *(Si activaste Resend)* Presiona **Enviar resumen ahora** y revisa tu correo.
 
 ---
 
 ## Resumen matutino automático
+
+**Para activarlo después:** crea tu llave en Resend, agrega `RESEND_API_KEY` (y `RESEND_FROM`) en Vercel → Settings → Environment Variables, y haz **Redeploy**. Aparecerá el botón "Enviar resumen ahora" y el correo diario empezará a llegar. Sin la llave, el cron se ejecuta pero no hace nada.
 
 `vercel.json` programa `/api/cron/daily-brief` todos los días a las **12:00 UTC = 6:00 am de Ciudad de México**. La ruta solo responde si Vercel manda el encabezado `Authorization: Bearer CRON_SECRET`, y no envía dos resúmenes el mismo día.
 

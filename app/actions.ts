@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireUserCtx } from "@/lib/context";
 import { parseTaskText, type Estado, type Prioridad } from "@/lib/tasks";
 import { generateAndSendBrief } from "@/lib/brief";
+import { env } from "@/lib/env";
 
 type Result = { ok: true } | { ok: false; error: string };
 
@@ -83,6 +84,9 @@ export async function deleteTask(id: string): Promise<Result> {
 
 export async function sendBriefNow(): Promise<Result> {
   try {
+    if (!env.resendEnabled()) {
+      return { ok: false, error: "El resumen por correo está desactivado. Agrega RESEND_API_KEY en Vercel para activarlo." };
+    }
     const ctx = await requireUserCtx();
     await generateAndSendBrief(ctx);
     return { ok: true };

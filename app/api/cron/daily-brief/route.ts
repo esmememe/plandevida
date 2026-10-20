@@ -23,6 +23,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
+  // Si no hay llave de Resend, el resumen por correo está apagado.
+  if (!env.resendEnabled()) {
+    return NextResponse.json({ ok: true, omitido: "Resumen por correo desactivado (falta RESEND_API_KEY)" });
+  }
+
   const supabase = createAdminClient();
   const allowed = env.allowedEmail();
   const { data: users, error } = await supabase.auth.admin.listUsers({ perPage: 200 });

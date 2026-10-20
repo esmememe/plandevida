@@ -15,6 +15,7 @@ import { SectionSkeleton } from "@/components/section";
 import { SendBriefButton } from "@/components/send-brief-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { env } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -37,7 +38,7 @@ export default async function Home({
           <h1 className="text-2xl font-semibold tracking-tight first-letter:uppercase">{fecha}</h1>
         </div>
         <div className="flex items-center gap-1">
-          <SendBriefButton />
+          {env.resendEnabled() && <SendBriefButton />}
           <ThemeToggle />
           <form action="/auth/signout" method="post">
             <Button variant="ghost" size="icon" aria-label="Cerrar sesión" type="submit">

@@ -29,6 +29,8 @@ export const env = {
   anthropicApiKey: () => required("ANTHROPIC_API_KEY"),
   anthropicModel: () => process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5",
 
+  // El resumen por correo es opcional: se activa solo si existe RESEND_API_KEY.
+  resendEnabled: () => Boolean(process.env.RESEND_API_KEY),
   resendApiKey: () => required("RESEND_API_KEY"),
   resendFrom: () => process.env.RESEND_FROM || "Panel de Vida <onboarding@resend.dev>",
 
